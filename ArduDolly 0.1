@@ -1,0 +1,72 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+const int buttonPin = A2;    // the number of the pushbutton pin
+const int ledPin = 13;      // the number of the LED pin
+
+// Variables will change:
+const int valueButtonMenu = 100;
+const int valueButtonOk = 200;
+const int valueButtonCancel = 300;
+int ledState = LOW;         // the current state of the output pin
+int buttonState;             // the current reading from the input pin
+int lastButtonState = 0;   // the previous reading from the input pin
+int giro = 0;
+// the following variables are long's because the time, measured in miliseconds,
+// will quickly become a bigger number than can be stored in an int.
+float lastDebounceTime = 0;  // the last time the output pin was toggled
+float debounceDelay = 1;    // the debounce time; increase if the output flickers
+
+void setup() {
+  lcd.begin(16, 2);
+  pinMode(buttonPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+
+  // set initial LED state
+  digitalWrite(ledPin, ledState);
+  lcd.setCursor(0,0);
+  lcd.print("Ciao");
+  lcd.setCursor(0,1);
+  lcd.print("Antonio");
+  delay(1);
+  lcd.clear();
+}
+int buttonRead() {
+  return analogRead(buttonPin);
+}
+// Da usare per il debounce
+//int buttonRead() {
+//  int reading = analogRead(buttonPin);
+//  if (reading != lastButtonState) {
+//    lastDebounceTime = millis();
+//  } 
+//  if ((millis() - lastDebounceTime) > debounceDelay) {
+//      if (reading != buttonState) {
+//        buttonState = reading;
+//      }
+//  }
+//  lastButtonState = reading;
+//  return buttonState;
+//}
+
+String buttonValue(){
+  int value = buttonRead();
+  if ((0<value)&&(value < valueButtonMenu)) {
+    return "Menu";
+  }
+  if ((valueButtonMenu<value)&&(value < valueButtonOk)) {
+    return "OK";
+  }
+   if ((valueButtonOk < value)&&(value < valueButtonCancel)) {
+    return "Cancel";
+  }
+}
+
+
+void loop() {
+  String a = buttonValue();
+  if (giro == 0) {
+    lcd.print(a);
+
+  }
+}
